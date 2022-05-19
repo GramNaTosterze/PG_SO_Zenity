@@ -1,0 +1,7 @@
+1) nazwa
+2) uściślenie tematu
+3) określenie funkcji(4-6)
+4) efekt działania programu
+5) trzymanie się terminu
+
+
