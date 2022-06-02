@@ -1,0 +1,26 @@
+.TH man 1 "2 April 2022" "1.1" "vedit man page"
+.SH NAME
+    vedit - video editor
+.SH SYNOPSIS
+    vedit.sh [optional_input_file]
+.SH DESCRIPTION
+    video editor made for Systemy Operacyjne using ffmpeg as a basis and zenity for 
+    script comes with 7 options:
+    1: "Przycięcie" lets you choose when the video will start and end
+    2: "Wstawianie" lets you join two or more videos into one  
+    3: "Wstawianie ścieżki dzwiękowej" lets you add audio track to your 
+    4: "czarno-biały filtr" makes video black and white
+    5: "Podgląd aktualnego pliku" lets you preview changes made
+    6: "Cofnij ostatnią zmianę" undos last change made
+    7: "Export" exports video
+.SH EXAMPLES
+    vedit will open zenity file window.
+    vedit example.mp4 will skip file window and open example.mp4 to edit.
+.SH OPTIONS
+    vedit does not take any options
+.SH BUGS
+    no known bugs.
+.SH AUTHOR
+   Krzysztof Napiórkowski ( s191689@student.pg.edu.pl )
+.SH REPORTING BUGS
+   github.com/GramNaTosterze/SO_duzy_skrypt/issues
