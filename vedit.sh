@@ -1,7 +1,7 @@
 # Author           : Krzysztof Napiórkowski ( s191689@student.pg.edu.pl )
 # Created On       : 2 April 2022
 # Last Modified By : Krzysztof Napiórkowski ( s191689@student.pg.edu.pl )
-# Last Modified On : 2 April 2022 
+# Last Modified On : 2 April 2022 21:13
 # Version          : 1.1
 #
 # Description      :
@@ -74,6 +74,10 @@ function extention() {
     local FILE=$1
     echo `ls $FILE | rev | cut -d '.' -f 1 | rev`
 }
+function question_zenity() {
+    zenity --question --title "vedit" --text "Dokonać modyfikacji?" --ok-label "Tak" --cancel-label "Nie"
+    return $?
+}
 #zmienne
 FFMPEG_SILENT="-y -loglevel quiet"
 FILE=$1
@@ -111,6 +115,7 @@ until isVideo $FILE; do
     fi
 done
 
+ORG_FILE=$FILE
 EXTENTION=$(extention $FILE)
 OUTPUT="$TMP_DIR/output2.$EXTENTION"
 
@@ -127,7 +132,7 @@ until [ "" ]; do
             CUT=$(hour:min:sec $((END-BEG)))
             BEG=$(hour:min:sec $BEG)
             END=$(hour:min:sec $END)
-            if zenity --question --title "Wycięcie" --text "Przyciąć od $BEG do $END ?" --ok-label "Tak" --cancel-label "Nie"; then
+            if question_zenity; then
                 ffmpeg $FFMPEG_SILENT -ss $BEG -i $FILE -to $CUT -c copy $OUTPUT
                 outputFile
             fi
@@ -144,7 +149,7 @@ until [ "" ]; do
                     break;
                 fi
             done
-            if zenity --question --title "Dopięcie" --text "Połączyć dane pliki?" --ok-label "Tak" --cancel-label "Nie"; then
+            if question_zenity; then
                 ffmpeg $FFMPEG_SILENT -f concat -safe 0 -i $LIST -c copy $OUTPUT
                 outputFile
             fi
@@ -161,7 +166,7 @@ until [ "" ]; do
                 REPLACE=1
             fi
 
-            if zenity --question --title "ścieżka" --text "Dodać ścierzkę dzwiękową?" --ok-label "Tak" --cancel-label "Nie"; then
+            if question_zenity; then
                 if [ $REPLACE -eq 0 ]; then
                     ffmpeg $FFMPEG_SILENT -i $FILE -i $AUDIO -map 0:v -map 1:a -c:v copy -shortest $OUTPUT
                 else
@@ -171,7 +176,7 @@ until [ "" ]; do
             fi
         ;;
         "${MENU[3]}") #czarno-biały filtr
-            if zenity --question --title "klatki" --text "Usunąć powtarzające się klatki? Operacja ta usunie aktualną ścierzkę dzwiękową" --ok-label "Tak" --cancel-label "Nie"; then
+            if question_zenity; then
                 ffmpeg $FFMPEG_SILENT -i $FILE -vf hue=s=0 $OUTPUT
                 outputFile
             fi
@@ -181,7 +186,11 @@ until [ "" ]; do
         ;;
         "${MENU[5]}") #cofnięcie ostatniej zmiany
             if zenity --question --title "cofnięcie zmiany" --text "cofnąć ostatnią zmianę? możliwe jest cofnięcie tylko ostatniej zmiany." --ok-label "Tak" --cancel-label "Nie"; then
-                OUTPUT=$FILE
+                outputFile
+                FILE=$OUTPUT
+                if [ -f $FILE ]; then
+                    FILE=$ORG_FILE
+                fi
                 outputFile
             fi
         ;;
@@ -196,7 +205,7 @@ until [ "" ]; do
                         mv -f $FILE ./$OUTPUT
                         break;
                     else
-                    zenity --notification --window-icon="error" --text="nazwa pliku wyjściowego nie może być pusta"
+                        zenity --notification --window-icon="error" --text="nazwa pliku wyjściowego nie może być pusta"
                     fi
                 fi
             fi
